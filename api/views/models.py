@@ -4,7 +4,7 @@ from django.db import models
 
 class EthDomain(models.Model):
 
-    name_hash = models.CharField(primary_key=True, max_length=66)
+    name_hash = models.CharField(primary_key=True, max_length=128)
     domain_name = models.TextField()
     registrant = models.CharField(max_length=64, blank=False, null=False)
     expiration_date = models.DateTimeField(null=False, blank=False)
