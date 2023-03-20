@@ -12,6 +12,22 @@ ens_contract = w3.eth.contract(address=w3.toChecksumAddress(ETH_REGISTRY_ADDRESS
 
 
 
+# OK Takeaways
+# The main eth registrar can only be scraped for 
+# 1 new registrations
+# 2 renewals
+# we will have to scrape a different contract for 
+# 1 transfers of NFT ownership
+# transfers of NFT Registration
+# Changing the resolved address
+# Sales on 3rd party marketplaces ( Will this be accounted for by scraping )
+
+# if you want to go through all the logs and decode the hexbytes into decmial data
+# https://docs.etherscan.io/api-endpoints/logs
+# Then you can filter logs by topic ^ see docs
+# but you could pull one thousand registration events at a time by using this API endpoint
+# insead of the current implementation where we pull every transaction on the ENS contract. 
+
 
 class Command(BaseCommand):
 
@@ -28,9 +44,10 @@ class Command(BaseCommand):
         sort = "desc"
         offset = "100"
         page = "1"
-        response = requests.get(f"https://api.etherscan.io/api?module=account&action=txlist&address={ETH_REGISTRY_ADDRESS}&startblock={start_block}&endblock={end_block}&page={page}&offset={offset}&sort={sort}&apikey={ETHERSCAN_API_KEY}&order=desc").json()
+        response = requests.get(f"https://api.etherscan.io/api?module=account&action=txlist&address={ETH_REGISTRY_ADDRESS}&startblock={start_block}&endblock={end_block}&page={page}&offset={offset}&sort={sort}&apikey={ETHERSCAN_API_KEY}").json()
         for transaction in response['result']:
-            if ("register" in transaction['functionName']) and (transaction['txreceipt_status']=="1"):
+            # if ("register" in transaction['functionName']) and (transaction['txreceipt_status']=="1"):
+            if True:
         #     print(transaction)
                 tx_block = transaction['blockNumber']
                 tx_hash = transaction['hash']
@@ -44,10 +61,20 @@ class Command(BaseCommand):
 
                 receipt = w3.eth.get_transaction_receipt(transaction['hash'])
                 registered_names = ens_contract.events.NameRegistered().processReceipt(receipt)
-                print(registered_names)
+                renewed_names = ens_contract.events.NameRenewed().processReceipt(receipt)
+                # print("registered_names")
+                # print(registered_names)
+                # print("renewed_names")
+                # print(renewed_names)
+
+                # renewed_names
+                # (AttributeDict({'args': AttributeDict({'label': b'\xec-[z%\x19"w\xa8\xef$\xe5\x92\x98\xa7T\xf3\xab@\xf1\xf1\x05\xc1\xee7\x03\x07\x9fa\xc0h\x1f', 'name': 'squatchy', 'cost': 8361306034214821, 'expires': 1827991631}), 'event': 'NameRenewed', 'logIndex': 226, 'transactionIndex': 72, 'transactionHash': HexBytes('0x865ba3efef3791f4301465953cc584b8989dad192891452d1c57f862b0f8013e'), 'address': '0x283Af0B28c62C092C9727F1Ee09c02CA627EB7F5', 'blockHash': HexBytes('0x3b05016829fdf6fbcfa0466df45162bd136bd93f0a6d27400689605b3f984e05'), 'blockNumber': 16856812}),)
+                # parse with 
+                # for event in renewed_names:
+
 
                 for event in registered_names:
-                    print(event['args'])
+                    # print(event['args'])
                     domain_name = event['args']['name']
                     name_hash = hash_name(domain_name)
                     cost = int(event['args']['cost'])
