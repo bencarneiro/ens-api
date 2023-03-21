@@ -97,3 +97,32 @@ class Command(BaseCommand):
                     print("no registration to record")
 
 
+
+
+# Here is the preferred implementation of scanning the logs for new registrations
+# need to duplicate the process for renewals
+# Largely trivial because of the ability to filter etherscan logs by topic
+
+# response = requests.get("https://api.etherscan.io/api?module=logs&action=getLogs&address=0x283af0b28c62c092c9727f1ee09c02ca627eb7f5&startblock=0&endblock=99999999&page=1&offset=100&sort=desc&topic0=0xca6abbe9d7f11422cb6ca7629fbf6fe9efb1c621f71ce8f02b9f2a230097404f&apikey=AICZ691V8T5ES3WP9PQDVNU3CQUSC5AQ17").json()
+# for log in response['result']:
+#     print(log)
+#     domain_name = bytes.fromhex(log['data'][-64:]).decode('utf-8')
+#     print(domain_name)
+# #     name_hash = hash_name(domain_name)
+# #     print(name_hash)
+#     registrant = "0x" + log['topics'][2][-40:]
+#     print(registrant)
+#     expiry = datetime.datetime.fromtimestamp(int(log['data'][130:194], 16))
+#     print(expiry)
+#     tx_block = int(log['blockNumber'], 16)
+#     print(tx_block)
+#     tx_hash = log['transactionHash']
+#     print(tx_hash)
+#     tx_hash_index = log['transactionIndex']
+#     tx_dt = datetime.datetime.fromtimestamp(int(log['timeStamp'], 16))
+#     print(tx_dt)
+#     cost = int(log['data'][66:130], 16)
+#     print(cost)
+#     gas_used = int(log['gasUsed'], 16)
+#     print(gas_used)
+#     break
