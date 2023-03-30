@@ -12,3 +12,6 @@ def hash_name(desired_name):
     eth = w3.solidityKeccak(['uint256', 'bytes32'], [x0, x1])  # this is .eth
     namehash = w3.keccak(text=desired_name)
     return w3.solidityKeccak(['bytes32', 'bytes32'], [eth, namehash])  # this is vitalik.eth
+
+def get_token_id(name):
+    return int.from_bytes(w3.keccak(text=name), "big")
