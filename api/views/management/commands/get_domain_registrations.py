@@ -57,9 +57,7 @@ class Command(BaseCommand):
             
 
             for log in response['result']:
-                domain_name = bytes.fromhex(log['data'][-64:]).decode('utf-8')
-                print(type(domain_name))
-                print(domain_name)
+                domain_name = bytes.fromhex(log['data'][-64:]).decode('utf-8').rstrip('\x00')
                 name_hash = hash_name(domain_name)
                 token_id = get_token_id(domain_name)
                 registrant = "0x" + log['topics'][2][-40:]
