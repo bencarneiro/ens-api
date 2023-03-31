@@ -58,7 +58,7 @@ class Command(BaseCommand):
 
             for log in response['result']:
                 domain_name = bytes.fromhex(log['data'][-64:]).decode('utf-8').rstrip('\x00')
-                name_hash = hash_name(domain_name)
+                name_hash = hash_name(domain_name).hex()
                 token_id = get_token_id(domain_name)
                 registrant = "0x" + log['topics'][2][-40:]
                 expiry = datetime.datetime.fromtimestamp(int(log['data'][130:194], 16))

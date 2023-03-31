@@ -58,7 +58,7 @@ class Command(BaseCommand):
 
             for log in response['result']:
                 domain_name = bytes.fromhex(log['data'][-64:]).decode('utf-8').rstrip('\x00')
-                name_hash = hash_name(domain_name)
+                name_hash = hash_name(domain_name).hex()
                 token_id = str(get_token_id(domain_name))
                 expiry = datetime.datetime.fromtimestamp(int(log['data'][130:194], 16))
                 tx_block = int(log['blockNumber'], 16)
@@ -67,8 +67,6 @@ class Command(BaseCommand):
                 tx_dt = datetime.datetime.fromtimestamp(int(log['timeStamp'], 16))
                 cost = int(log['data'][66:130], 16)
                 gas_used = int(log['gasUsed'], 16)
-
-                print("hiiiii")
 
                 new_domain = EthDomain(
                     node = name_hash,
