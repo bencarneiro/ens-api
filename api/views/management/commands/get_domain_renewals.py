@@ -1,8 +1,8 @@
-from views.models import DomainRenewal
+from views.models import DomainRenewal, DomainRegistration, EthDomain
 import requests
 from api.settings import ETH_REGISTRY_ADDRESS, ETH_REGISTRY_ABI, ETHERSCAN_API_KEY
 from django.core.management.base import BaseCommand
-from views.views import hash_name
+from views.views import hash_name, get_token_id
 # from views.models import EthDomain
 import datetime
 from web3 import Web3
@@ -59,26 +59,33 @@ class Command(BaseCommand):
             for log in response['result']:
                 domain_name = bytes.fromhex(log['data'][-64:]).decode('utf-8')
                 name_hash = hash_name(domain_name)
+                token_id = str(get_token_id(domain_name))
                 # registrant = "0x" + log['topics'][2][-40:]
                 expiry = datetime.datetime.fromtimestamp(int(log['data'][130:194], 16))
                 tx_block = int(log['blockNumber'], 16)
                 tx_hash = log['transactionHash']
-                # tx_hash_index = log['transactionIndex']
+                tx_hash_index = log['transactionIndex']
                 tx_dt = datetime.datetime.fromtimestamp(int(log['timeStamp'], 16))
                 cost = int(log['data'][66:130], 16)
-                # gas_used = int(log['gasUsed'], 16)
+                gas_used = int(log['gasUsed'], 16)
 
                 print("hiiiii")
 
-                
-                new_domain = DomainRenewal(
-                    name_hash = name_hash,
+                new_domain = EthDomain(
+                    node = name_hash,
                     domain_name = domain_name,
+                    token_id = token_id
+                )
+                new_domain.save()
+                new_domain = DomainRenewal(
+                    node = new_domain,
                     expiration_date = expiry,
                     cost = cost,
                     tx_block = tx_block,
                     tx_hash = tx_hash,
-                    tx_dt = tx_dt
+                    tx_hash_index = tx_hash_index,
+                    tx_dt = tx_dt,
+                    gas_used = gas_used
                 )
                 new_domain.save()
 

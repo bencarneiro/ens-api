@@ -1,8 +1,8 @@
-from views.models import EthDomain
+from views.models import EthDomain, DomainRegistration
 import requests
 from api.settings import ETH_REGISTRY_ADDRESS, ETH_REGISTRY_ABI, ETHERSCAN_API_KEY
 from django.core.management.base import BaseCommand
-from views.views import hash_name
+from views.views import hash_name, get_token_id
 from views.models import EthDomain
 import datetime
 from web3 import Web3
@@ -58,27 +58,38 @@ class Command(BaseCommand):
 
             for log in response['result']:
                 domain_name = bytes.fromhex(log['data'][-64:]).decode('utf-8')
+                print(type(domain_name))
+                print(domain_name)
                 name_hash = hash_name(domain_name)
+                token_id = get_token_id(domain_name)
                 registrant = "0x" + log['topics'][2][-40:]
                 expiry = datetime.datetime.fromtimestamp(int(log['data'][130:194], 16))
                 tx_block = int(log['blockNumber'], 16)
                 tx_hash = log['transactionHash']
-                # tx_hash_index = log['transactionIndex']
+                tx_hash_index = log['transactionIndex']
                 tx_dt = datetime.datetime.fromtimestamp(int(log['timeStamp'], 16))
                 cost = int(log['data'][66:130], 16)
-                # gas_used = int(log['gasUsed'], 16)
+                gas_used = int(log['gasUsed'], 16)
 
                 new_domain = EthDomain(
-                    name_hash = name_hash,
+                    node = name_hash,
                     domain_name = domain_name,
+                    token_id = token_id
+                )
+                new_domain.save()
+                
+                new_registration = DomainRegistration(
+                    node=new_domain,
                     registrant = registrant,
                     expiration_date = expiry,
                     cost = cost,
                     tx_block = tx_block,
                     tx_hash = tx_hash,
-                    tx_dt = tx_dt
+                    tx_hash_index = tx_hash_index,
+                    tx_dt = tx_dt,
+                    gas_used = gas_used
                 )
-                new_domain.save()
+                new_registration.save()
 
             if len(response['result']) != 1000:
                 keep_going = False
