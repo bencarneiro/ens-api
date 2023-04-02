@@ -28,6 +28,9 @@ class DomainRegistration(models.Model):
     class Meta:
         managed = True
         db_table = 'domain_registration'
+        constraints = [
+            models.UniqueConstraint(fields=['tx_hash', 'tx_hash_index'], name='unique_registration')
+        ]
 
 
 class DomainRenewal(models.Model):
@@ -46,6 +49,9 @@ class DomainRenewal(models.Model):
     class Meta:
         managed = True
         db_table = 'domain_renewal'
+        constraints = [
+            models.UniqueConstraint(fields=['tx_hash', 'tx_hash_index'], name='unique_renewal')
+        ]
 
 class DomainTransfer(models.Model):
 
@@ -58,10 +64,14 @@ class DomainTransfer(models.Model):
     tx_hash_index = models.CharField(max_length=16, blank=False, null=False)
     tx_dt = models.DateTimeField(null=False, blank=False)
     gas_used = models.BigIntegerField(default=0)
+    
 
     class Meta:
         managed = True
         db_table = 'domain_transfer'
+        constraints = [
+            models.UniqueConstraint(fields=['tx_hash', 'tx_hash_index'], name='unique_transfer')
+        ]
 
 class DomainSale(models.Model):
 
@@ -82,3 +92,6 @@ class DomainSale(models.Model):
     class Meta:
         managed = True
         db_table = 'domain_sale'
+        constraints = [
+            models.UniqueConstraint(fields=['tx_hash', 'tx_hash_index'], name='unique_sale')
+        ]

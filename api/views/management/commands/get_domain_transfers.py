@@ -57,26 +57,32 @@ class Command(BaseCommand):
             
 
             for log in response['result']:
-                sender = "0x" + str(log['topics'][1])[26:]
-                receiver = "0x" + str(log['topics'][2])[26:]
-                token_id = int(str(log['topics'][3])[2:],16)
-                gas_used = int(log['gasUsed'], 16)
-                tx_block = int(log['blockNumber'], 16)
-                tx_hash = log['transactionHash']
-                tx_hash_index = log['transactionIndex']
-                tx_dt = datetime.datetime.fromtimestamp(int(log['timeStamp'], 16))
-                new_transfer = DomainTransfer(
-                    sender=sender,
-                    receiver=receiver,
-                    token_id=token_id,
-                    gas_used=gas_used,
-                    tx_block=tx_block,
-                    tx_hash=tx_hash,
-                    tx_hash_index=tx_hash_index,
-                    tx_dt=tx_dt
-                )
-                new_transfer.save()
-
+                try:
+                    sender = "0x" + str(log['topics'][1])[26:]
+                    receiver = "0x" + str(log['topics'][2])[26:]
+                    token_id = int(str(log['topics'][3])[2:],16)
+                    gas_used = int(log['gasUsed'], 16)
+                    tx_block = int(log['blockNumber'], 16)
+                    tx_hash = log['transactionHash']
+                    tx_hash_index = log['transactionIndex']
+                    tx_dt = datetime.datetime.fromtimestamp(int(log['timeStamp'], 16))
+                    new_transfer = DomainTransfer(
+                        sender=sender,
+                        receiver=receiver,
+                        token_id=token_id,
+                        gas_used=gas_used,
+                        tx_block=tx_block,
+                        tx_hash=tx_hash,
+                        tx_hash_index=tx_hash_index,
+                        tx_dt=tx_dt
+                    )
+                    new_transfer.save()
+                    print(f"successfully saved transfer of token {token_id} in transaction {tx_hash}")
+                except Exception as e:
+                    print(f"there was an issue with this log")
+                    print("error")
+                    print(e)
+                    print(log)
             if len(response['result']) != 1000:
                 keep_going = False
             else:

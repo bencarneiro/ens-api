@@ -57,37 +57,45 @@ class Command(BaseCommand):
             
 
             for log in response['result']:
-                domain_name = bytes.fromhex(log['data'][-64:]).decode('utf-8').rstrip('\x00')
-                name_hash = hash_name(domain_name).hex()
-                token_id = get_token_id(domain_name)
-                registrant = "0x" + log['topics'][2][-40:]
-                expiry = datetime.datetime.fromtimestamp(int(log['data'][130:194], 16))
-                tx_block = int(log['blockNumber'], 16)
-                tx_hash = log['transactionHash']
-                tx_hash_index = log['transactionIndex']
-                tx_dt = datetime.datetime.fromtimestamp(int(log['timeStamp'], 16))
-                cost = int(log['data'][66:130], 16)
-                gas_used = int(log['gasUsed'], 16)
+                try:
+                    domain_name = bytes.fromhex(log['data'][-64:]).decode('utf-8').rstrip('\x00')
+                    name_hash = hash_name(domain_name).hex()
+                    token_id = get_token_id(domain_name)
+                    registrant = "0x" + log['topics'][2][-40:]
+                    expiry = datetime.datetime.fromtimestamp(int(log['data'][130:194], 16))
+                    tx_block = int(log['blockNumber'], 16)
+                    tx_hash = log['transactionHash']
+                    tx_hash_index = log['transactionIndex']
+                    tx_dt = datetime.datetime.fromtimestamp(int(log['timeStamp'], 16))
+                    cost = int(log['data'][66:130], 16)
+                    gas_used = int(log['gasUsed'], 16)
 
-                new_domain = EthDomain(
-                    node = name_hash,
-                    domain_name = domain_name,
-                    token_id = token_id
-                )
-                new_domain.save()
-                
-                new_registration = DomainRegistration(
-                    node=new_domain,
-                    registrant = registrant,
-                    expiration_date = expiry,
-                    cost = cost,
-                    tx_block = tx_block,
-                    tx_hash = tx_hash,
-                    tx_hash_index = tx_hash_index,
-                    tx_dt = tx_dt,
-                    gas_used = gas_used
-                )
-                new_registration.save()
+                    new_domain = EthDomain(
+                        node = name_hash,
+                        domain_name = domain_name,
+                        token_id = token_id
+                    )
+                    new_domain.save()
+                    
+                    new_registration = DomainRegistration(
+                        node=new_domain,
+                        registrant = registrant,
+                        expiration_date = expiry,
+                        cost = cost,
+                        tx_block = tx_block,
+                        tx_hash = tx_hash,
+                        tx_hash_index = tx_hash_index,
+                        tx_dt = tx_dt,
+                        gas_used = gas_used
+                    )
+                    new_registration.save()
+                    print(f"successfully saved registration of node {name_hash} in transaction {tx_hash}")
+                except Exception as e:
+                    print(f"there was an issue with this log")
+                    print("error")
+                    print(e)
+                    print(log)
+
 
             if len(response['result']) != 1000:
                 keep_going = False
