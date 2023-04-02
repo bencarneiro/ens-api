@@ -1,4 +1,4 @@
-from views.models import EthDomain, DomainRegistration
+from views.models import DomainTransfer
 import requests
 from api.settings import ETH_REGISTRY_ADDRESS, ETH_REGISTRY_ABI, ETHERSCAN_API_KEY, BASE_REGISTRAR_ADDRESS, NFT_TRANSFER_TOPIC
 from django.core.management.base import BaseCommand
@@ -57,7 +57,25 @@ class Command(BaseCommand):
             
 
             for log in response['result']:
-                print(log)
+                sender = "0x" + str(log['topics'][1])[26:]
+                receiver = "0x" + str(log['topics'][2])[26:]
+                token_id = int(str(log['topics'][3])[2:],16)
+                gas_used = int(log['gasUsed'], 16)
+                tx_block = int(log['blockNumber'], 16)
+                tx_hash = log['transactionHash']
+                tx_hash_index = log['transactionIndex']
+                tx_dt = datetime.datetime.fromtimestamp(int(log['timeStamp'], 16))
+                new_transfer = DomainTransfer(
+                    sender=sender,
+                    receiver=receiver,
+                    token_id=token_id,
+                    gas_used=gas_used,
+                    tx_block=tx_block,
+                    tx_hash=tx_hash,
+                    tx_hash_index=tx_hash_index,
+                    tx_dt=tx_dt
+                )
+                new_transfer.save()
 
             if len(response['result']) != 1000:
                 keep_going = False

@@ -49,7 +49,22 @@ class DomainRenewal(models.Model):
 
 class DomainTransfer(models.Model):
 
-    node = models.ForeignKey(EthDomain, on_delete=models.DO_NOTHING)
+    # node = models.ForeignKey(EthDomain, on_delete=models.DO_NOTHING)
+    token_id = models.TextField(null=False)
+    sender = models.CharField(max_length=64, blank=False, null=False)
+    receiver = models.CharField(max_length=64, blank=False, null=False)
+    tx_block = models.IntegerField(null=False)
+    tx_hash = models.CharField(max_length=128, blank=False, null=False)
+    tx_hash_index = models.CharField(max_length=16, blank=False, null=False)
+    tx_dt = models.DateTimeField(null=False, blank=False)
+    gas_used = models.BigIntegerField(default=0)
+
+    class Meta:
+        managed = True
+        db_table = 'domain_transfer'
+
+class DomainSale(models.Model):
+
     marketplace_contract_address = models.CharField(max_length=64, blank=False, null=False)
     buyer = models.CharField(max_length=64, blank=False, null=False)
     seller = models.CharField(max_length=64, blank=False, null=False)
@@ -66,4 +81,4 @@ class DomainTransfer(models.Model):
 
     class Meta:
         managed = True
-        db_table = 'domain_transfer'
+        db_table = 'domain_sale'
