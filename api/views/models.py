@@ -2,6 +2,11 @@ from django.db import models
 
 # Create your models here.
 
+# todo 
+# change uniqueConstraints to include the node (for registrations and renewals) and token_id for transfers
+# need to check if the transfer from 0x00000 -> ENS address /// ENS address => registrant token transfers have different transaction indices
+# write a try_catch for the unicode issues before running again?
+
 class EthDomain(models.Model):
 
     node = models.CharField(primary_key=True, max_length=128)
