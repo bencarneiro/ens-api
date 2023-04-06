@@ -59,9 +59,10 @@ class Command(BaseCommand):
             for log in response['result']:
                 try:
                     try:
-                        domain_name = bytes.fromhex(log['data'][-64:]).decode('utf-8').rstrip('\x00')
+                        domain_name = bytes.fromhex(log['data'][258:]).decode('utf-8').rstrip('\x00')
                     except:
-                        domain_name = "INVALID_DOMAIN"
+                        print(f"ERROR decoding tx {log['transactionHash']}")
+                        domain_name = "___INVALID_DOMAIN___"
                     name_hash = hash_name(domain_name).hex()
                     token_id = str(get_token_id(domain_name))
                     expiry = datetime.datetime.fromtimestamp(int(log['data'][130:194], 16))
