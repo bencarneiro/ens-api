@@ -11,7 +11,7 @@ class EthDomain(models.Model):
 
     node = models.CharField(primary_key=True, max_length=128)
     domain_name = models.TextField(null=False)
-    token_id = models.TextField(null=False)
+    token_id = models.CharField(max_length=128, blank=False, null=False)
     class Meta:
         managed = True
         db_table = 'eth_domain'
@@ -34,7 +34,7 @@ class DomainRegistration(models.Model):
         managed = True
         db_table = 'domain_registration'
         constraints = [
-            models.UniqueConstraint(fields=['tx_hash', 'tx_hash_index'], name='unique_registration')
+            models.UniqueConstraint(fields=['node', 'tx_hash'], name='unique_registration')
         ]
 
 
@@ -55,13 +55,13 @@ class DomainRenewal(models.Model):
         managed = True
         db_table = 'domain_renewal'
         constraints = [
-            models.UniqueConstraint(fields=['tx_hash', 'tx_hash_index'], name='unique_renewal')
+            models.UniqueConstraint(fields=['node', 'tx_hash'], name='unique_renewal')
         ]
 
 class DomainTransfer(models.Model):
 
     # node = models.ForeignKey(EthDomain, on_delete=models.DO_NOTHING)
-    token_id = models.TextField(null=False)
+    token_id = models.CharField(max_length=128, blank=False, null=False)
     sender = models.CharField(max_length=64, blank=False, null=False)
     receiver = models.CharField(max_length=64, blank=False, null=False)
     tx_block = models.IntegerField(null=False)
@@ -75,11 +75,12 @@ class DomainTransfer(models.Model):
         managed = True
         db_table = 'domain_transfer'
         constraints = [
-            models.UniqueConstraint(fields=['tx_hash', 'tx_hash_index'], name='unique_transfer')
+            models.UniqueConstraint(fields=['token_id', 'tx_hash', 'tx_hash_index', 'sender', 'receiver'], name='unique_transfer')
         ]
 
 class DomainSale(models.Model):
 
+    token_id = models.CharField(max_length=128, blank=False, null=False)
     marketplace_contract_address = models.CharField(max_length=64, blank=False, null=False)
     buyer = models.CharField(max_length=64, blank=False, null=False)
     seller = models.CharField(max_length=64, blank=False, null=False)
@@ -98,5 +99,5 @@ class DomainSale(models.Model):
         managed = True
         db_table = 'domain_sale'
         constraints = [
-            models.UniqueConstraint(fields=['tx_hash', 'tx_hash_index'], name='unique_sale')
+            models.UniqueConstraint(fields=['token_id', 'tx_hash', 'tx_hash_index', 'buyer', 'seller'], name='unique_sale')
         ]
