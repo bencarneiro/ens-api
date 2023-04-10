@@ -7,6 +7,17 @@ from django.db import models
 # need to check if the transfer from 0x00000 -> ENS address /// ENS address => registrant token transfers have different transaction indices
 # write a try_catch for the unicode issues before running again?
 
+# todo
+# parse the legacy auction-based contract for the first wave of domain-registrations
+# parse the opensea contract for domain sales
+# probably gonna need to parse other NFT domain marketplaces as well
+# Create a MastodonBot for new ENS registrations
+# Can't hurt to create one for renewals
+# create a mastodon bot for ENS sales
+# 
+# API endpoint for holdings by owner
+# 
+
 class EthDomain(models.Model):
 
     node = models.CharField(primary_key=True, max_length=128)
