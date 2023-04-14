@@ -91,7 +91,7 @@ class Command(BaseCommand):
                 print(tx_hash)
                 print(cost)
                 print(usd_price)
-                toot = f"@new_domain '{domain_name}.eth' just registered until {expiry.strftime('%Y-%m-%d')} by {name} for {round((cost / (10**18)),3)} ETH (${round(usd_price,2)}) --- https://etherscan.io/tx/{tx_hash}"
+                toot = f"'{domain_name}.eth' just registered until {expiry.strftime('%Y-%m-%d')} by {name} for {round((cost / (10**18)),3)} ETH (${round(usd_price,2)}) --- https://etherscan.io/tx/{tx_hash}"
                 api.toot(toot)
                 print(toot)
 
