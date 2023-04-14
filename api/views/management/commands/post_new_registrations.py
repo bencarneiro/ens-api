@@ -92,7 +92,7 @@ class Command(BaseCommand):
                 print(cost)
                 print(usd_price)
                 toot = f"'{domain_name}.eth' just registered until {expiry.strftime('%Y-%m-%d')} by {name} for {round((cost / (10**18)),3)} ETH (${round(usd_price,2)}) --- https://etherscan.io/tx/{tx_hash}"
-                api.toot(toot)
+                api.status_post(toot, visibility="unlisted")
                 print(toot)
 
        
