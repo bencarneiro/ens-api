@@ -166,3 +166,9 @@ NFT_TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4d
 # Get the other logs associated with that TX
 # Which marketplace was interacted with?
 # What currencies moved?
+
+MASTODON_FIRST_SECRET = os.environ.get("MASTODON_FIRST_SECRET", "")
+MASTODON_SECOND_SECRET = os.environ.get("MASTODON_SECOND_SECRET", "")
+MASTODON_API_BASE_URL = os.environ.get("MASTODON_API_BASE_URL", "https://cryptodon.lol")
+MASTODON_LOGIN_EMAIL = os.environ.get("MASTODON_LOGIN_EMAIL", 'bencarneiro+1@gmail.com')
+MASTODON_LOGIN_PASSWORD = os.environ.get("MASTODON_LOGIN_PASSWORD", "")
